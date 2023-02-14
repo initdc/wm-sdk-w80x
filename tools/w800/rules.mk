@@ -18,14 +18,16 @@ ASRCS ?= $(wildcard *.S)
 
 subdir_path := $(subst $(abspath $(TOP_DIR))/,,$(shell pwd))
 
+CURRENT_DIR := $(notdir $(shell pwd))
+
 SUBDIRS ?= $(patsubst %/,%,$(dir $(wildcard */Makefile)))
 
-OBJS := $(CSRCS:%.c=$(OBJODIR)/$(subdir_path)/%.o) \
-        $(ASRCS:%.S=$(OBJODIR)/$(subdir_path)/%.o) \
-	$(CPPSRCS:%.cpp=$(OBJODIR)/$(subdir_path)/%.o)
+OBJS := $(CSRCS:%.c=$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o) \
+        $(ASRCS:%.S=$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o) \
+	$(CPPSRCS:%.cpp=$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o)
 
-OBJS-DEPS := $(patsubst %.c, $(OBJODIR)/$(subdir_path)/%.o.d, $(CSRCS))
-OBJS-CPPDEPS := $(patsubst %.cpp, $(OBJODIR)/$(subdir_path)/%.o.d, $(CPPSRCS))
+OBJS-DEPS := $(patsubst %.c, $(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o.d, $(CSRCS))
+OBJS-CPPDEPS := $(patsubst %.cpp, $(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o.d, $(CPPSRCS))
 
 OLIBS := $(GEN_LIBS:%=$(LIBODIR)/%)
 
@@ -195,14 +197,14 @@ endif
 endif
 endif
 
-$(OBJODIR)/$(subdir_path)/%.o: %.c
+$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o: %.c
 	@mkdir -p $(OBJODIR)/$(subdir_path)
-	$(CC) $(if $(findstring $<,$(DSRCS)),$(DFLAGS),$(CFLAGS)) $(COPTS_$(*F)) $(INCLUDES) $(CMACRO) -c "$<" -o "$@" -MMD -MD -MF "$(@:$(OBJODIR)/$(subdir_path)/%.o=$(OBJODIR)/$(subdir_path)/%.o.d)" -MT "$(@)"
+	$(CC) $(if $(findstring $<,$(DSRCS)),$(DFLAGS),$(CFLAGS)) $(COPTS_$(*F)) $(INCLUDES) $(CMACRO) -c "$<" -o "$@" -MMD -MD -MF "$(@:$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o=$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o.d)" -MT "$(@)"
 
-$(OBJODIR)/$(notdir $(shell pwd))/%.o: %.cpp
+$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o: %.cpp
 	@mkdir -p $(OBJODIR)/$(subdir_path)
-	$(CPP) $(if $(findstring $<,$(DSRCS)),$(DFLAGS),$(CFLAGS)) $(COPTS_$(*F)) $(INCLUDES) $(CMACRO) -c "$<" -o "$@" -MMD -MD -MF "$(@:$(OBJODIR)/$(subdir_path)/%.o=$(OBJODIR)/$(subdir_path)/%.o.d)" -MT "$(@)"
-$(OBJODIR)/$(subdir_path)/%.o: %.S
+	$(CPP) $(if $(findstring $<,$(DSRCS)),$(DFLAGS),$(CXXFLAGS)) $(COPTS_$(*F)) $(INCLUDES) $(CMACRO) -c "$<" -o "$@" -MMD -MD -MF "$(@:$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o=$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o.d)" -MT "$(@)"
+$(OBJODIR)/$(subdir_path)/$(CURRENT_DIR)_%.o: %.S
 	@mkdir -p $(OBJODIR)/$(subdir_path)
 	$(ASM) $(ASMFLAGS) $(INCLUDES) $(CMACRO) -c "$<" -o "$@"
 

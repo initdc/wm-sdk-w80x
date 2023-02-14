@@ -169,7 +169,7 @@ int uart_demo(int bandrate, int parity, int stopbits)
                            demo_uart_task,
                            (void *) demo_uart,
                            (void *) demo_uart_task_stk, /** 任务栈的起始地址 */
-                           DEMO_UART_TAST_STK_SIZE,                         /** 任务栈的大小     */
+                           DEMO_UART_TAST_STK_SIZE*4,                         /** 任务栈的大小     */
                            DEMO_UART_TASK_PRIO, 0);
     }
     if (-1 == bandrate)

@@ -22,7 +22,7 @@
  ******************************************************************************/
 MEMORY
 {
-	I-SRAM : ORIGIN = 0x080d0400 , LENGTH = 0x138000 /* I-SRAM  1M+128KB */ 
+	I-SRAM : ORIGIN = 0x080d0400 , LENGTH = 0x128000 /* I-SRAM  1M+160KB */ 
 	D-SRAM : ORIGIN = 0x20000100 , LENGTH = 0x47EFC   /* D-SRAM  288KB */
 	V-SRAM : ORIGIN = 0x20000000 , LENGTH = 0x100   /* off-chip SRAM 8MB */
 }

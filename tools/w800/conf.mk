@@ -109,12 +109,27 @@ LIB_EXT = .a
 CCFLAGS := -Wall \
     -DTLS_CONFIG_CPU_XT804=1 \
     -DGCC_COMPILE=1 \
+    -DNO_PERSISTENCE=1 \
+    -DUSE_SELECT=1 \
+    -DHIGH_PERFORMANCE=1 \
+    -DUSE_MBEDTLS=1 \
     -mcpu=ck804ef \
     $(optimization) \
     -std=gnu99 \
     -c  \
     -mhard-float  \
-    -Wall  \
+    -fdata-sections  \
+    -ffunction-sections
+
+CXXFLAGS := -Wall \
+    -DTLS_CONFIG_CPU_XT804=1 \
+    -DGCC_COMPILE=1 \
+    -mcpu=ck804ef \
+    $(optimization) \
+    -c  \
+	-MMD \
+	-MP \
+    -mhard-float  \
     -fdata-sections  \
     -ffunction-sections
 

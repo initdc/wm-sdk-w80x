@@ -93,15 +93,18 @@ tls_os_status_t tls_os_task_create(tls_os_task_t *task,
 	xTaskHandle xHandle;
 	BaseType_t xreturn;
 
-	pTask = tls_mem_alloc(sizeof(StaticTask_t));
-	if(pTask == NULL)
-	{
-		return TLS_OS_ERROR;
-	}
-
 	stk_size /= sizeof(StackType_t);
 	if (stk_start)
 	{
+		pTask = tls_mem_alloc(sizeof(StaticTask_t));
+		if(pTask == NULL)
+		{
+			return TLS_OS_ERROR;
+		}
+		if (task)
+		{
+			*task = pTask;
+		}
     	xHandle = xTaskCreateStatic(entry, name, stk_size, param,
         	                        configMAX_PRIORITIES - prio, (StackType_t *)stk_start, pTask);
 		xreturn = (xHandle==NULL) ? pdFALSE:pdTRUE;
@@ -109,19 +112,25 @@ tls_os_status_t tls_os_task_create(tls_os_task_t *task,
 	else
 	{
 		xreturn = xTaskCreate( entry, name, stk_size, param,
-                            configMAX_PRIORITIES - prio, (TaskHandle_t * const)pTask);
+                            configMAX_PRIORITIES - prio, (TaskHandle_t * const)task);
 	}
 
 	//printf("configMAX_PRIORITIES - prio:%d\n", configMAX_PRIORITIES - prio);
     if (xreturn == pdTRUE)
     {
-    	*task = pTask;
         os_status = TLS_OS_SUCCESS;
     }
     else
     {
-    	tls_mem_free(pTask);
-		pTask = NULL;
+    	if (pTask)
+    	{
+	    	tls_mem_free(pTask);
+			pTask = NULL;
+    	}
+		if (task)
+		{
+			*task = NULL;
+		}
         os_status = TLS_OS_ERROR;
     }
 
